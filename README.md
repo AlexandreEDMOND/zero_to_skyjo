@@ -21,6 +21,16 @@ L'objectif de cette phase est d'expérimenter différentes architectures de mod�
 - Le jeu se termine lorsque toutes les cartes du joueur sont visibles ou que le deck contient moins de 2 cartes.
 - Le score final est la somme des valeurs des cartes visibles plus le nombre d'échanges effectués.
 
+### Entraînement et test du modèle
+- Pour entraîner le modèle sur le Mini Skyjo, utilisez la commande suivante :
+  ```
+  uv run train_mini_skyjo.py --train --episodes 3000
+  ```
+- Pour tester le modèle avec un affichage du jeu et des étapes dans le terminal, utilisez :
+  ```
+  uv run train_mini_skyjo.py --demo
+  ```
+
 ### Résultats
 Les performances de l'architecture du modèle sur le Mini Skyjo sont bonnes, ce qui valide l'approche choisie pour cette phase. Les métriques et courbes d'apprentissage montrent une amélioration significative au fil des épisodes d'entraînement.
 
