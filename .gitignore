@@ -1,0 +1,5 @@
+.venv
+.mypy_cache
+
+model.pt
+metrics.csv
