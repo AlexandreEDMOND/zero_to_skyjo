@@ -34,6 +34,8 @@ L'objectif de cette phase est d'expérimenter différentes architectures de mod�
 ### Résultats
 Les performances de l'architecture du modèle sur le Mini Skyjo sont bonnes, ce qui valide l'approche choisie pour cette phase. Les métriques et courbes d'apprentissage montrent une amélioration significative au fil des épisodes d'entraînement.
 
+![Courbe d'apprentissage](learning_curve.png)
+
 ## Phase 2: Intégration avec l'API
 
 ### Objectif
