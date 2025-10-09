@@ -320,9 +320,9 @@ def select_action(qnet: DuelingQNet, obs: np.ndarray, n_actions: int, epsilon: f
             q = q + 0.01 * torch.randn_like(q)  # petit bruit
         return int(torch.argmax(q).item())
 
-def train_dqn(episodes=3000, buffer_capacity=100000, batch_size=256, gamma=0.995,
+def train_dqn(episodes=20000, buffer_capacity=100000, batch_size=256, gamma=0.995,
               lr=3e-4, target_update=500, start_learning=1000, epsilon_start=1.0,
-              epsilon_end=0.15, epsilon_decay_steps=50000, eval_every=200,
+              epsilon_end=0.15, epsilon_decay_steps=300000, eval_every=1000,
               model_path="model.pt", metrics_path="metrics.csv"):
     env = MiniSkyjoEnv(seed=123)
     obs = env.reset()
@@ -339,6 +339,7 @@ def train_dqn(episodes=3000, buffer_capacity=100000, batch_size=256, gamma=0.995
 
     global_step = 0
     epsilon = epsilon_start
+    best_avg_score = 1000
 
     # Metrics
     ep_rewards = []
@@ -412,6 +413,10 @@ def train_dqn(episodes=3000, buffer_capacity=100000, batch_size=256, gamma=0.995
 
         if ep % eval_every == 0:
             print(f"[Episode {ep:5d}] avg_score(last50)={moving[-1]:.2f}  epsilon={epsilon:.3f}  avg_steps(last50)={moving_steps[-1]:.2f} ")
+            if moving[-1] < best_avg_score:
+                best_avg_score =  moving[-1]
+                torch.save(q.state_dict(), model_path)
+                print(f"Saved model to {model_path}")
 
     # Save model
     torch.save(q.state_dict(), model_path)
@@ -483,19 +488,68 @@ def demo(model_path="model.pt", seed=999):
         print(f"Final score: {info['final_score']}  (exchanges={info['exchanges']})")
 
 
+def evaluate(model_path="model.pt", episodes=1000):
+    env = MiniSkyjoEnv()
+    obs = env.reset()
+    obs_dim = obs.shape[0]
+    n_actions = 12
+
+    # Charger le modèle
+    q = DuelingQNet(obs_dim, n_actions)   # ou QNet si tu n’as pas encore switché
+    q.load_state_dict(torch.load(model_path, map_location="cpu"))
+    q.eval()
+
+    scores = []
+    steps_list = []
+
+    for ep in tqdm(range(episodes)):
+        obs = env.reset()
+        done = False
+        steps = 0
+        final_score = None
+
+        while not done:
+            with torch.no_grad():
+                x = torch.tensor(obs, dtype=torch.float32).unsqueeze(0)
+                q_values = q(x).squeeze(0)
+                action = int(torch.argmax(q_values).item())  # greedy policy
+
+            obs, reward, done, info = env.step(action)
+            steps += 1
+
+            if done and "final_score" in info:
+                final_score = info["final_score"]
+
+        scores.append(final_score)
+        steps_list.append(steps)
+
+    avg_score = sum(scores) / len(scores)
+    avg_steps = sum(steps_list) / len(steps_list)
+
+    print(f"Evaluation over {episodes} games:")
+    print(f"  Average score: {avg_score:.2f}")
+    print(f"  Average steps: {avg_steps:.2f}")
+
+    return {"avg_score": avg_score, "avg_steps": avg_steps, "scores": scores, "steps": steps_list}
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--train", action="store_true", help="Train DQN on CPU")
-    parser.add_argument("--episodes", type=int, default=3000, help="Number of training episodes")
+    parser.add_argument("--episodes", type=int, default=20000, help="Number of training episodes")
     parser.add_argument("--demo", action="store_true", help="Run a terminal demo with the trained model")
     parser.add_argument("--model_path", type=str, default="model.pt", help="Path to save/load the model")
     parser.add_argument("--metrics_path", type=str, default="metrics.csv", help="CSV metrics path")
+    parser.add_argument("--eval", action="store_true", help="Evaluate a trained model")
+    parser.add_argument("--eval_episodes", type=int, default=1000, help="Number of eval episodes")
     args = parser.parse_args()
 
     if args.train:
         train_dqn(episodes=args.episodes, model_path=args.model_path, metrics_path=args.metrics_path)
     if args.demo:
         demo(model_path=args.model_path)
+    if args.eval:
+        evaluate(model_path=args.model_path, episodes=args.eval_episodes)
 
 
 if __name__ == "__main__":

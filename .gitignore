@@ -3,3 +3,5 @@
 
 model.pt
 metrics.csv
+
+episode_lengths.png
