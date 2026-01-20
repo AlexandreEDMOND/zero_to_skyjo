@@ -1,0 +1,22 @@
+[experiment]
+name = "solo_skyjo_greedy_threshold"
+seed = 123
+mode = "eval"
+
+[env]
+id = "solo_skyjo"
+seed = 123
+max_actions = 40
+action_penalty = 1
+invalid_action_penalty = 2
+
+[agent]
+id = "greedy_threshold"
+hand_size = 6
+min_value = -2
+max_value = 12
+threshold = 5
+seed = 123
+
+[eval]
+episodes = 1000

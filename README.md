@@ -1,5 +1,36 @@
 # Zero to Skyjo
 
+## Project layout (modular)
+- `zero_to_skyjo/envs`: RL environments (same interface across envs)
+- `zero_to_skyjo/agents`: RL agents (DQN now, others later)
+- `zero_to_skyjo/utils`: shared utilities (replay buffer, seeding)
+- `configs`: experiment configs (TOML)
+- `runs`: outputs per run (metrics, plots, models, config snapshot)
+
+## Models
+- DQN (dueling, double update in training loop)
+- PPO (actor-critic with training loop)
+- Tabular Q-learning (compact state)
+- Random baseline
+- Greedy baselines (discard-first, discard>5 -> draw)
+
+## Quick start
+- One command (mode from config): `uv run main.py --config configs/mini_skyjo_dqn.toml`
+- Solo Skyjo train: `uv run main.py --config configs/solo_skyjo_dqn.toml --mode train`
+- Solo Skyjo PPO train: `uv run main.py --config configs/solo_skyjo_ppo.toml --mode train`
+- Solo Skyjo Tabular Q train: `uv run main.py --config configs/solo_skyjo_tabular_q.toml --mode train`
+- Train (explicit): `uv run main.py --config configs/mini_skyjo_dqn.toml --mode train`
+- Eval: `uv run main.py --config configs/mini_skyjo_dqn.toml --mode eval --model runs/<exp>/<ts>/model_best.pt`
+- Demo (terminal): `uv run main.py --config configs/mini_skyjo_dqn.toml --mode demo --model runs/<exp>/<ts>/model_best.pt`
+- Eval (standalone): `uv run eval_agent.py --config configs/mini_skyjo_dqn.toml --model runs/<exp>/<ts>/model_best.pt`
+- Demo UI (pygame): `uv run demo_ui.py --config configs/mini_skyjo_dqn.toml --model runs/<exp>/<ts>/model_best.pt`
+- Baseline eval (random): `uv run eval_agent.py --config configs/solo_skyjo_random.toml`
+- Baseline eval (greedy min): `uv run eval_agent.py --config configs/solo_skyjo_greedy_min.toml`
+- Baseline eval (greedy threshold): `uv run eval_agent.py --config configs/solo_skyjo_greedy_threshold.toml`
+
+Outputs go to `runs/<experiment>/<timestamp>/` with `model_best.pt`, `model_final.pt`, `metrics.csv`, and plots.
+
+
 ## Objectif du projet
 L'objectif de ce projet est de développer une intelligence artificielle capable de jouer au Skyjo, un jeu de cartes stratégique, tout en minimisant son score. Ce projet est structuré en plusieurs phases pour garantir une progression méthodique et efficace.
 
@@ -24,11 +55,11 @@ L'objectif de cette phase est d'expérimenter différentes architectures de mod�
 ### Entraînement et test du modèle
 - Pour entraîner le modèle sur le Mini Skyjo, utilisez la commande suivante :
   ```
-  uv run train_mini_skyjo.py --train --episodes 3000
+  uv run -m zero_to_skyjo.train --config configs/mini_skyjo_dqn.toml
   ```
 - Pour tester le modèle avec un affichage du jeu et des étapes dans le terminal, utilisez :
   ```
-  uv run train_mini_skyjo.py --demo
+  uv run -m zero_to_skyjo.demo --config configs/mini_skyjo_dqn.toml --model runs/<exp>/<ts>/model_best.pt --delay 0.2
   ```
 
 ### Résultats

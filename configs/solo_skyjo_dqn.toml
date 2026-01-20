@@ -1,0 +1,47 @@
+[experiment]
+name = "solo_skyjo_dqn"
+seed = 123
+mode = "train"
+
+[env]
+id = "solo_skyjo"
+seed = 123
+max_actions = 40
+action_penalty = 1
+invalid_action_penalty = 2
+
+[agent]
+id = "dqn_dueling"
+hidden = 512
+lr = 3e-4
+gamma = 0.995
+target_update = 500
+weight_decay = 1e-5
+grad_clip = 1.0
+device = "cpu"
+action_noise_std = 0.01
+action_noise_epsilon = 0.2
+
+[train]
+episodes = 1000
+buffer_capacity = 100000
+batch_size = 256
+start_learning = 1000
+epsilon_start = 1.0
+epsilon_end = 0.15
+epsilon_decay_steps = 300000
+eval_every = 1000
+plot_window = 50
+
+[eval]
+episodes = 1000
+
+[demo]
+seed = 999
+delay = 0.2
+
+[demo_ui]
+seed = 999
+delay = 0.2
+fps = 60
+window_scale = 1.0

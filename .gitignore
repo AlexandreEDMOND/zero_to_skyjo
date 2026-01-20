@@ -1,7 +1,22 @@
-.venv
-.mypy_cache
+# Python caches
+__pycache__/
+*.py[cod]
+*.pyo
 
-model.pt
-metrics.csv
+# Envs / tooling
+.venv/
+.venv*/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
 
-episode_lengths.png
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Runs / artifacts
+runs/

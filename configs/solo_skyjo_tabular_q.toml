@@ -1,0 +1,31 @@
+[experiment]
+name = "solo_skyjo_tabular_q"
+seed = 123
+mode = "train"
+
+[env]
+id = "solo_skyjo"
+seed = 123
+max_actions = 40
+action_penalty = 1
+invalid_action_penalty = 2
+
+[agent]
+id = "tabular_q"
+hand_size = 6
+min_value = -2
+max_value = 12
+alpha = 0.1
+gamma = 0.99
+seed = 123
+
+[train]
+episodes = 50000
+epsilon_start = 1.0
+epsilon_end = 0.1
+epsilon_decay_steps = 50000
+eval_every = 2000
+plot_window = 50
+
+[eval]
+episodes = 1000

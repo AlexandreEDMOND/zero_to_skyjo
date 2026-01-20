@@ -1,0 +1,43 @@
+[experiment]
+name = "solo_skyjo_ppo"
+seed = 123
+mode = "train"
+
+[env]
+id = "solo_skyjo"
+seed = 123
+max_actions = 40
+action_penalty = 1
+invalid_action_penalty = 2
+
+[agent]
+id = "ppo"
+hidden = 256
+lr = 3e-4
+gamma = 0.99
+gae_lambda = 0.95
+clip_eps = 0.2
+ent_coef = 0.01
+vf_coef = 0.5
+max_grad_norm = 0.5
+device = "cpu"
+
+[train]
+episodes = 5000
+ppo_epochs = 4
+ppo_minibatch_size = 256
+eval_every = 200
+plot_window = 50
+
+[eval]
+episodes = 1000
+
+[demo]
+seed = 999
+delay = 0.2
+
+[demo_ui]
+seed = 999
+delay = 0.2
+fps = 60
+window_scale = 1.0
